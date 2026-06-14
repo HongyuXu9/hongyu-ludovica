@@ -6,7 +6,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -21,9 +23,9 @@ public class PresenzaController {
 
     @PostMapping
     @Operation(summary = "Crea una nuova presenza")
-    public ResponseEntity<String> salvaPresenza(@RequestBody Presenza presenza) {
+    public ResponseEntity<Map<String, String>> salvaPresenza(@RequestBody Presenza presenza) {
         service.salvaEInviaNotifiche(presenza);
-        return ResponseEntity.ok("Presenza registrata con successo!");
+        return ResponseEntity.ok(Collections.singletonMap("message", "Presenza registrata con successo!"));
     }
 
     @GetMapping

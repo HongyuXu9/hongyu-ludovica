@@ -324,18 +324,17 @@ document.addEventListener('DOMContentLoaded', function() {
             rsvpForm.style.position = 'relative';
             rsvpForm.appendChild(loaderOverlay);
 
-
             fetch('/presenze', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dataToSend)
             })
-            .then(response => {
-                if (!response.ok) throw new Error(`Errore HTTP ${response.status}`);
-                return response.json();
-            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('errore in corso, ritentare');
+                    }
+                    return response.json();
+                })
 
             // riattiva se ti serve per testare stile
             // new Promise((resolve) => setTimeout(() => resolve(dataToSend), 3000))
@@ -383,36 +382,34 @@ document.addEventListener('DOMContentLoaded', function() {
                     messageText += '</div>';
                     if (feedback) feedback.innerHTML = messageText;
 
-                    // Svuota tutti i campi del form per renderlo pronto a un nuovo uso pulito
-                    rsvpForm.reset();
-                    if (accommodationDetails) accommodationDetails.style.display = 'none';
-                    if (document.getElementById('dateFrom')) document.getElementById('dateFrom').value = '2026-10-24';
-                    if (document.getElementById('dateTo')) document.getElementById('dateTo').value = '2026-10-26';
-                    if (dateError) dateError.classList.remove('show');
+                    const btnRitorna = document.getElementById('btnRitornaForm');
+                    const btnHome = document.getElementById('btnTornaHome');
 
-                    // funzione: NUOVA PRESENZA (Reset del form e mostra i campi)
-                    document.getElementById('btnRitornaForm').addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation(); // 👈 Fix fondamentale: blocca il bubbling impedendo al body di chiudere l'articolo
-
-                        if (feedback) feedback.innerHTML = '';
-                        if (fieldsContainer) fieldsContainer.style.display = 'block';
-                        if (actionsContainer) actionsContainer.style.display = 'block';
-
-                        if (submitButton) {
+                    if (btnRitorna) {
+                        btnRitorna.addEventListener('click', function(e) {
+                            e.stopPropagation(); // BLOCCA IL BUBBLING
+                            feedback.innerHTML = '';
+                            fieldsContainer.style.display = 'block';
+                            actionsContainer.style.display = 'block';
                             submitButton.disabled = false;
-                            submitButton.value = "Conferma la tua presenza";
-                            submitButton.style.opacity = "1";
-                            submitButton.style.cursor = "pointer";
-                        }
-                    });
+                            rsvpForm.reset();
+                        });
+                    }
 
-                    // funzione: TORNA ALLA HOME (Usa la tua funzione del template)
-                    document.getElementById('btnTornaHome').addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation(); // Sicurezza extra anche sul ritorno in home
-                        hideArticle(true); // Chiude l'RSVP e riattiva Header/Footer/Sfondo
-                    });
+                    if (btnHome) {
+                        btnHome.addEventListener('click', function(e) {
+                            e.stopPropagation(); // BLOCCA IL BUBBLING
+                            hideArticle(true);
+                            // Ripristino stato dopo chiusura
+                            setTimeout(() => {
+                                feedback.innerHTML = '';
+                                fieldsContainer.style.display = 'block';
+                                actionsContainer.style.display = 'block';
+                                submitButton.disabled = false;
+                                rsvpForm.reset();
+                            }, 500);
+                        });
+                    }
                 })
                 .catch(error => {
                     console.error('Errore dettagliato:', error);
