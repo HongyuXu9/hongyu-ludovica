@@ -21,9 +21,9 @@ public class PresenzaController {
 
     @PostMapping
     @Operation(summary = "Crea una nuova presenza")
-    public ResponseEntity<Presenza> salvaPresenza(@RequestBody Presenza presenza) {
-        Presenza presenzaSalvata = service.salvaEInviaNotifiche(presenza);
-        return ResponseEntity.ok(presenzaSalvata);
+    public ResponseEntity<String> salvaPresenza(@RequestBody Presenza presenza) {
+        service.salvaEInviaNotifiche(presenza);
+        return ResponseEntity.ok("Presenza registrata con successo!");
     }
 
     @GetMapping

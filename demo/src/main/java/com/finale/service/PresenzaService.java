@@ -91,7 +91,7 @@ public class PresenzaService {
         emailSender.send(message);
     }
 
-    public Presenza salvaEInviaNotifiche(Presenza presenza) {
+    public void salvaEInviaNotifiche(Presenza presenza) {
         Presenza presenzaSalvata = repository.save(presenza);
         System.out.println("Presenza salvata con successo sul DB per: " + presenzaSalvata.getNomeCognome());
 
@@ -108,7 +108,6 @@ public class PresenzaService {
                 System.err.println("❌ Impossibile inviare anche l'email di allerta agli sposi: " + mailSposiException.getMessage());
             }
         }
-        return presenzaSalvata;
     }
 
     public Presenza salva(Presenza presenza) {

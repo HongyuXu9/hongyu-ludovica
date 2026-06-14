@@ -49,11 +49,7 @@ public class PresenzaServiceTest {
         presenzaSalvata.setId(1L);
         when(presenzaRepository.save(any(Presenza.class))).thenReturn(presenzaSalvata);
 
-        Presenza risultato = presenzaService.salvaEInviaNotifiche(presenzaTest);
-
-        assertNotNull(risultato, "Il risultato non dovrebbe essere null");
-        assertEquals(1L, risultato.getId());
-        assertEquals("Marco Rossi", risultato.getNomeCognome());
+        presenzaService.salvaEInviaNotifiche(presenzaTest);
 
         // Verifichiamo che abbia scritto sul DB una volta
         verify(presenzaRepository, times(1)).save(presenzaTest);
@@ -72,14 +68,11 @@ public class PresenzaServiceTest {
         doThrow(new RuntimeException("SMTP Connection timeout")).when(mailSender).send(any(SimpleMailMessage.class));
 
         assertDoesNotThrow(() -> {
-            Presenza risultato = presenzaService.salvaEInviaNotifiche(presenzaTest);
-            assertNotNull(risultato);
-            assertEquals(1L, risultato.getId());
+            presenzaService.salvaEInviaNotifiche(presenzaTest);
         }, "Il servizio non deve lanciare eccezioni se l'email fallisce");
 
         verify(presenzaRepository, times(1)).save(presenzaTest);
 
-        // IMPORTANTE: mailSender viene chiamato 2 volte!
         // 1a chiamata: tentativo per l'invitato (che fallisce lanciando l'eccezione)
         // 2a chiamata: catch del blocco che invia l'email di allerta a xupetrella@gmail.com
         verify(mailSender, times(2)).send(any(SimpleMailMessage.class));
