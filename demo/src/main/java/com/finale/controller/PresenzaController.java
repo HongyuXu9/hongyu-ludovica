@@ -3,6 +3,7 @@ package com.finale.controller;
 import com.finale.entity.Presenza;
 import com.finale.service.PresenzaService;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,17 +21,26 @@ public class PresenzaController {
 
     @PostMapping
     @Operation(summary = "Crea una nuova presenza")
-    public Presenza crea(@RequestBody Presenza presenza) {
-        return service.salva(presenza);
+    public ResponseEntity<Presenza> salvaPresenza(@RequestBody Presenza presenza) {
+        Presenza presenzaSalvata = service.salvaEInviaNotifiche(presenza);
+        return ResponseEntity.ok(presenzaSalvata);
     }
 
     @GetMapping
-    public List<Presenza> tutte() {
-        return service.tutte();
+    @Operation(summary = "Recupera tutte le presenze")
+    public ResponseEntity<List<Presenza>> tutte() {
+        List<Presenza> lista = service.tutte();
+        return ResponseEntity.ok(lista);
     }
 
     @GetMapping("/{id}")
-    public Presenza findById(@PathVariable Long id) {
-        return service.findById(id);
+    @Operation(summary = "Recupera una presenza tramite ID")
+    public ResponseEntity<Presenza> findById(@PathVariable Long id) {
+        Presenza presenza = service.findById(id);
+
+        if (presenza == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(presenza);
     }
 }
