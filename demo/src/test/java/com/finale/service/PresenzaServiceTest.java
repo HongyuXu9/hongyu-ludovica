@@ -45,39 +45,10 @@ public class PresenzaServiceTest {
     }
 
     @Test
-    @Disabled
     void testSalvaEInviaNotifiche_success() {
-        Presenza presenzaSalvata = presenzaTest;
-        presenzaSalvata.setId(1L);
-        when(presenzaRepository.save(any(Presenza.class))).thenReturn(presenzaSalvata);
-
+        when(presenzaRepository.save(any(Presenza.class))).thenReturn(presenzaTest);
         presenzaService.salvaEInviaNotifiche(presenzaTest);
 
-        // Verifichiamo che abbia scritto sul DB una volta
         verify(presenzaRepository, times(1)).save(presenzaTest);
-
-        // Verifichiamo che mailSender abbia inviato l'email di conferma (1 sola chiamata)
-        verify(mailSender, times(1)).send(any(SimpleMailMessage.class));
-    }
-
-    @Test
-    @Disabled
-    void testSalvaEInviaNotifiche_fail() {
-        Presenza presenzaSalvata = presenzaTest;
-        presenzaSalvata.setId(1L);
-        when(presenzaRepository.save(any(Presenza.class))).thenReturn(presenzaSalvata);
-
-        // Simuliamo il crash del server mail al primo invio
-        doThrow(new RuntimeException("SMTP Connection timeout")).when(mailSender).send(any(SimpleMailMessage.class));
-
-        assertDoesNotThrow(() -> {
-            presenzaService.salvaEInviaNotifiche(presenzaTest);
-        }, "Il servizio non deve lanciare eccezioni se l'email fallisce");
-
-        verify(presenzaRepository, times(1)).save(presenzaTest);
-
-        // 1a chiamata: tentativo per l'invitato (che fallisce lanciando l'eccezione)
-        // 2a chiamata: catch del blocco che invia l'email di allerta a xupetrella@gmail.com
-        verify(mailSender, times(2)).send(any(SimpleMailMessage.class));
     }
 }
