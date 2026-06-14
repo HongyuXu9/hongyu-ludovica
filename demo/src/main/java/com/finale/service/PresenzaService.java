@@ -116,7 +116,7 @@ public class PresenzaService {
         // Costruiamo il JSON manuale per Brevo
         String jsonPayload = "{"
                 + "\"sender\":{\"name\":\"Sistema Matrimonio\",\"email\":\"xupetrella@gmail.com\"},"
-                + "\"to\":[{\"email\":\"xu.hongyu1999@gmail.com\",\"name\":\"Hongyu & Ludovica\"}],"
+                + "\"to\":[{\"email\":\"xupetrella@gmail.com\",\"name\":\"Hongyu & Ludovica\"}],"
                 + "\"subject\":\"⚠️ ATTENZIONE: Invio Email Fallito per " + presenza.getNomeCognome() + "\","
                 + "\"htmlContent\":\"" + htmlContenuto.replace("\"", "\\\"").replace("\n", " ") + "\""
                 + "}";
@@ -142,7 +142,7 @@ public class PresenzaService {
             System.err.println("❌ Impossibile inviare l'email di allerta agli sposi: " + e.getMessage());
         }
     }
-    
+
     public void salvaEInviaNotifiche(Presenza presenza) {
         Presenza presenzaSalvata = repository.save(presenza);
 
@@ -159,10 +159,6 @@ public class PresenzaService {
                 System.err.println("❌ Impossibile inviare anche l'email di allerta agli sposi: " + mailSposiException.getMessage());
             }
         }
-    }
-
-    public Presenza salva(Presenza presenza) {
-        return repository.save(presenza);
     }
 
     public List<Presenza> tutte() {
